@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "vinxi build --preset node-server",
-    "start": "vinxi start --preset node-server"
+    "build": "vinxi build --preset vercel",
+    "start": "vinxi start --preset vercel"
   },
   "keywords": [],
   "author": "",
