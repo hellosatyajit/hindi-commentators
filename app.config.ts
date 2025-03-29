@@ -1,15 +1,22 @@
-import { defineConfig } from '@tanstack/react-start/config'
-import tsConfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from "@tanstack/react-start/config";
+import tsConfigPaths from "vite-tsconfig-paths";
+// import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   tsr: {
-    appDirectory: 'src',
+    appDirectory: "src",
   },
   vite: {
     plugins: [
       tsConfigPaths({
-        projects: ['./tsconfig.json'],
+        projects: ["./tsconfig.json"],
       }),
     ],
+    build: {
+      rollupOptions: {
+        external: ['node:stream', 'node:stream/web', 'node:async_hooks'],
+      },
+    },
   },
-})
+  
+});
