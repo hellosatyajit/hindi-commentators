@@ -13,6 +13,7 @@ import { seo } from '../utils/seo'
 import { getSupabaseServerClient } from '../utils/supabase'
 import { Toaster } from 'react-hot-toast'
 import { Login } from '~/components/Login'
+import { Logout } from '~/components/Logout'
 
 // @ts-ignore
 const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
@@ -112,7 +113,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               {user ? (
                 <>
                   <span className="mr-2">{user.user_metadata.name}</span>
-                  
+                  <Logout />
                 </>
               ) : (
                 <Login />
