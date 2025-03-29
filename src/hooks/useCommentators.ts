@@ -2,9 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { getSupabaseClient } from "../utils/supabase";
 import type { Commentator, Vote } from "../types/database";
 import { Route } from "../routes/__root";
+import { getCommentatorsFn } from "~/utils/commentators";
 
 export type CommentatorWithVotes = Commentator & {
   votes?: Pick<Vote, "vote_type" | "user_id">[];
+  vote_count: number;
   total_votes: number;
   user_vote?: number;
 };
@@ -32,14 +34,17 @@ export function useCommentators() {
             ? [...otherVotes, { ...existingVote, vote_type: voteType }]
             : [...otherVotes, { user_id: user?.id!, vote_type: voteType }];
 
-          const totalVotes = updatedVotes.reduce(
+          const voteCount = updatedVotes.reduce(
             (sum, vote) => sum + (vote.vote_type || 0),
             0
           );
 
+          const totalVotes = updatedVotes.length;
+
           return {
             ...commentator,
             votes: updatedVotes,
+            vote_count: voteCount,
             total_votes: totalVotes,
             user_vote: voteType,
           };
@@ -51,41 +56,11 @@ export function useCommentators() {
 
   const fetchCommentators = useCallback(async () => {
     try {
-      const supabase = getSupabaseClient();
-
-      const { data, error } = await supabase
-        .from("commentators")
-        .select(
-          `
-          *,
-          votes (
-            vote_type,
-            user_id
-          )
-        `
-        )
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      const commentatorsWithVotes = data.map((commentator) => {
-        const userVote = commentator.votes?.find(
-          (vote: Vote) => vote.user_id === user?.id
-        )?.vote_type;
-        return {
-          ...commentator,
-          total_votes:
-            commentator.votes?.reduce(
-              (sum: number, vote: Pick<Vote, "vote_type">) =>
-                sum + (vote.vote_type || 0),
-              0
-            ) || 0,
-          user_vote: userVote,
-        };
+      const data = await getCommentatorsFn({
+        data: { userId: user?.id } as unknown as any,
       });
-      console.log("commentatorsWithVotes", commentatorsWithVotes);
       
-      setCommentators(commentatorsWithVotes);
+      setCommentators(data);
       setError(null);
     } catch (err) {
       console.error("Error fetching commentators:", err);
@@ -99,13 +74,12 @@ export function useCommentators() {
 
   useEffect(() => {
     fetchCommentators();
-
     const supabase = getSupabaseClient();
 
-    const channel = supabase.channel('votes_channel');
+    const channel = supabase.channel("votes_channel");
 
     channel
-      .on('broadcast', { event: 'vote_update' }, async (payload) => {
+      .on("broadcast", { event: "vote_update" }, async (payload) => {
         if (payload.payload.user_id !== user?.id) {
           await fetchCommentators();
         }
@@ -128,5 +102,6 @@ export function useCommentators() {
     error,
     fetchCommentators,
     updateCommentatorVote,
+    totalVotes: commentators.reduce((sum, commentator) => sum + commentator.total_votes, 0)
   };
 }

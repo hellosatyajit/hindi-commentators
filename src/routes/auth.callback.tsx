@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getSupabaseServerClient } from '../utils/supabase'
+import { trackSignIn } from '../utils/analytics'
 
 // @ts-ignore
 const authCallbackFn = createServerFn({ method: 'GET' }).handler(async ({ data: code }) => {
@@ -9,10 +10,18 @@ const authCallbackFn = createServerFn({ method: 'GET' }).handler(async ({ data: 
   }
 
   const supabase = await getSupabaseServerClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
     return new Response(error.message, { status: 500 });
+  }
+
+  // Track successful sign-in if we have user data
+  if (data.user) {
+    trackSignIn(data.user.id, 'google', { 
+      email: data.user.email,
+      name: data.user.user_metadata?.name
+    });
   }
 
   return redirect({

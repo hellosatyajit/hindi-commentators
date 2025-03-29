@@ -11,18 +11,11 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LogoutImport } from './routes/logout'
 import { Route as AuthedImport } from './routes/_authed'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthCallbackImport } from './routes/auth.callback'
 
 // Create/Update Routes
-
-const LogoutRoute = LogoutImport.update({
-  id: '/logout',
-  path: '/logout',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AuthedRoute = AuthedImport.update({
   id: '/_authed',
@@ -59,13 +52,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedImport
       parentRoute: typeof rootRoute
     }
-    '/logout': {
-      id: '/logout'
-      path: '/logout'
-      fullPath: '/logout'
-      preLoaderRoute: typeof LogoutImport
-      parentRoute: typeof rootRoute
-    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -81,14 +67,12 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthedRoute
-  '/logout': typeof LogoutRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthedRoute
-  '/logout': typeof LogoutRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 
@@ -96,30 +80,27 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRoute
-  '/logout': typeof LogoutRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/logout' | '/auth/callback'
+  fullPaths: '/' | '' | '/auth/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/logout' | '/auth/callback'
-  id: '__root__' | '/' | '/_authed' | '/logout' | '/auth/callback'
+  to: '/' | '' | '/auth/callback'
+  id: '__root__' | '/' | '/_authed' | '/auth/callback'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRoute
-  LogoutRoute: typeof LogoutRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRoute,
-  LogoutRoute: LogoutRoute,
   AuthCallbackRoute: AuthCallbackRoute,
 }
 
@@ -135,7 +116,6 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_authed",
-        "/logout",
         "/auth/callback"
       ]
     },
@@ -144,9 +124,6 @@ export const routeTree = rootRoute
     },
     "/_authed": {
       "filePath": "_authed.tsx"
-    },
-    "/logout": {
-      "filePath": "logout.tsx"
     },
     "/auth/callback": {
       "filePath": "auth.callback.tsx"

@@ -7,7 +7,7 @@ export function CommentatorList() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto p-4">
         <div className="space-y-4">
           {[...Array(5)].map((_, index) => (
             <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
@@ -42,12 +42,12 @@ export function CommentatorList() {
     if (a.is_active !== b.is_active) {
       return a.is_active ? -1 : 1;
     }
-    return a.total_votes - b.total_votes;
+    return a.vote_count - b.vote_count;
   });
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <motion.div 
+    <div className="max-w-3xl mx-auto p-4">
+      <motion.div
         className="divide-y divide-gray-100"
         layout
       >
@@ -56,12 +56,12 @@ export function CommentatorList() {
             <motion.div
               key={commentator.id}
               layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 500, 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
                 damping: 30,
                 mass: 1
               }}

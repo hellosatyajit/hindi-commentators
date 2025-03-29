@@ -1,11 +1,9 @@
 import {
   HeadContent,
-  Link,
   Outlet,
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { createServerFn } from '@tanstack/react-start'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary'
@@ -103,9 +101,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <header className="px-4 py-8 flex gap-2 text-lg">
-          <nav className='max-w-4xl mx-auto flex flex-col sm:flex-row gap-5
+          <nav className='max-w-4xl sm:mx-auto flex flex-col sm:flex-row gap-5
           '>
-            <h1 className="text-5xl font-black text-gray-800">
+            <h1 className="text-3xl sm:text-5xl font-black text-gray-800">
               Hindi Commentary,
               <br />
               vote worst from the worst
@@ -114,7 +112,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               {user ? (
                 <>
                   <span className="mr-2">{user.user_metadata.name}</span>
-                  <Link to="/logout">Logout</Link>
+                  
                 </>
               ) : (
                 <Login />

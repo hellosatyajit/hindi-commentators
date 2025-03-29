@@ -1,6 +1,7 @@
 import { useMutation } from '../hooks/useMutation'
 import { loginFn } from '../routes/_authed'
 import toast from 'react-hot-toast'
+import { trackSignIn } from '../utils/analytics'
 
 export function Login() {
   const loginMutation = useMutation({
@@ -12,6 +13,7 @@ export function Login() {
       }
 
       if (ctx.data?.url) {
+        trackSignIn('unknown', 'google', { status: 'initiated' });
         window.location.href = ctx.data.url
       }
     },
@@ -24,7 +26,7 @@ export function Login() {
   return (
     <button
       onClick={() => loginMutation.mutate({})}
-      className="w-full bg-white text-gray-700 rounded py-2 px-4 font-semibold border border-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2 text-base"
+      className="w-fit bg-white text-gray-700 rounded py-2 px-4 font-semibold border border-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2 text-base"
       disabled={loginMutation.status === 'pending'}
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -45,7 +47,7 @@ export function Login() {
           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
         />
       </svg>
-      {loginMutation.status === 'pending' ? 'Signing in...' : 'Sign in with Google'}
+      Sign in to cast your vote
     </button>
   )
 }

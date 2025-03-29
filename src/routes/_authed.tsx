@@ -1,8 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { Login } from '../components/Login'
 import { getSupabaseServerClient } from '../utils/supabase'
 import { BASE_URL } from '../utils/config'
+import { resetUser } from '~/utils/analytics'
 export const loginFn = createServerFn()
   .handler(async () => {
     const supabase = await getSupabaseServerClient()
@@ -22,6 +23,26 @@ export const loginFn = createServerFn()
 
     return data;
   })
+
+export const logoutFn = createServerFn().handler(async () => {
+  const supabase = await getSupabaseServerClient()
+  const { data } = await supabase.auth.getUser()
+
+  resetUser(data.user?.id);
+
+  const { error } = await supabase.auth.signOut()
+
+  if (error) {
+    return {
+      error: true,
+      message: error.message,
+    }
+  }
+
+  throw redirect({
+    href: '/',
+  })
+})
 
 export const Route = createFileRoute('/_authed')({
   beforeLoad: ({ context }) => {
