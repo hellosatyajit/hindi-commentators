@@ -17,6 +17,7 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
     const [isVoting, setIsVoting] = useState(false);
     const [prevRank, setPrevRank] = useState(rank);
     const hasRankChanged = prevRank !== rank;
+    const isAnonymous = user?.app_metadata?.provider === 'anonymous'
 
     if (hasRankChanged) {
         setPrevRank(rank);
@@ -33,7 +34,8 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
                 userId: user.id,
                 commentatorName: commentator.name,
                 previousVote: commentator.user_vote ?? 'none',
-                newVote: commentator.user_vote ? false : true
+                newVote: commentator.user_vote ? false : true,
+                isAnonymous
             });
 
             await handleVoteFn({
@@ -83,6 +85,11 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
                 <p className="text-sm text-gray-900 leading-relaxed">
                     {commentator.description}
                 </p>
+                {isAnonymous && (
+                    <p className="text-xs text-gray-500 mt-1">
+                        Sign in with Google to make your votes permanent
+                    </p>
+                )}
             </div>
 
             <div>

@@ -3,6 +3,7 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useRouter,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import * as React from 'react'
@@ -10,17 +11,16 @@ import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary'
 import { NotFound } from '../components/NotFound'
 import appCss from '../styles/app.css?url'
 import { seo } from '../utils/seo'
-import { getSupabaseServerClient } from '../utils/supabase'
+import { getSupabaseServerClient, signInAnonymously } from '../utils/supabase'
 import { Toaster } from 'react-hot-toast'
-import { Login } from '~/components/Login'
-import { Logout } from '~/components/Logout'
+import { useEffect } from 'react'
 
 // @ts-ignore
 const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
   const supabase = await getSupabaseServerClient()
   const { data, error: _error } = await supabase.auth.getUser()
 
-  if (!data.user?.email) {
+  if (!data.user) {
     return null
   }
 
@@ -68,7 +68,6 @@ export const Route = createRootRoute({
   }),
   beforeLoad: async () => {
     const user = await fetchUser()
-
     return {
       user,
     }
@@ -85,6 +84,19 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  const { user } = Route.useRouteContext()
+  const router = useRouter()
+
+  useEffect(() => {
+    const handleInitialAuth = async () => {
+      if (!user) {
+        await signInAnonymously()
+        await router.invalidate()
+      }
+    }
+    handleInitialAuth()
+  }, [user, router])
+
   return (
     <RootDocument>
       <Outlet />
@@ -93,33 +105,18 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { user } = Route.useRouteContext()
-
   return (
     <html>
       <head>
         <HeadContent />
       </head>
       <body>
-        <header className="px-4 py-8 flex gap-2 text-lg">
-          <nav className='max-w-4xl sm:mx-auto flex flex-col sm:flex-row gap-5
-          '>
-            <h1 className="text-3xl sm:text-5xl font-black text-gray-800">
-              Hindi Commentary,
-              <br />
-              vote worst from the worst
-            </h1>
-            <div className="sm:ml-auto">
-              {user ? (
-                <>
-                  <span className="mr-2">{user.user_metadata.name}</span>
-                  <Logout />
-                </>
-              ) : (
-                <Login />
-              )}
-            </div>
-          </nav>
+        <header className="px-4 py-8 max-w-3xl sm:mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-800">
+            Hindi Commentary,
+            <br />
+            vote worst from the worst
+          </h1>
         </header>
         <hr />
         {children}

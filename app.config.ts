@@ -1,6 +1,5 @@
 import { defineConfig } from "@tanstack/react-start/config";
 import tsConfigPaths from "vite-tsconfig-paths";
-// import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   server: {
