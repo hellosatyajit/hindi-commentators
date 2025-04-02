@@ -1,5 +1,5 @@
-import mixpanel from "mixpanel-browser"
-import { MIXPANEL_TOKEN } from "./config";
+import mixpanel from "mixpanel-browser";
+import { AUTO_SHARE_SHOWN_KEY, MIXPANEL_TOKEN } from "./config";
 
 if (!MIXPANEL_TOKEN) {
   console.warn(
@@ -54,3 +54,11 @@ export const resetUser = (userId?: string) => {
 };
 
 export { mixpanel };
+
+export const shouldShowAutoShare = () => {
+  return !(localStorage.getItem(AUTO_SHARE_SHOWN_KEY) === "true");
+};
+
+export const markAutoShareAsShown = () => {
+  localStorage.setItem(AUTO_SHARE_SHOWN_KEY, "true");
+};

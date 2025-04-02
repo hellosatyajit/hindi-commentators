@@ -14,6 +14,7 @@ import { seo } from '../utils/seo'
 import { getSupabaseServerClient, signInAnonymously } from '../utils/supabase'
 import { Toaster } from 'react-hot-toast'
 import { useEffect } from 'react'
+import { ShareModal, useShareModal } from '../components/ShareModal'
 
 // @ts-ignore
 const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
@@ -105,6 +106,8 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { isModalOpen, openModal, closeModal } = useShareModal()
+
   return (
     <html>
       <head>
@@ -112,11 +115,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <header className="px-4 py-8 max-w-3xl sm:mx-auto">
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-800">
-            Hindi Commentary,
-            <br />
-            vote worst from the worst
-          </h1>
+          <div className="flex justify-between items-center gap-2">
+            <h1 className="text-3xl sm:text-4xl font-black text-gray-800">
+              Hindi Commentary,
+              <br />
+              vote worst from the worst
+            </h1>
+            <button
+              onClick={openModal}
+              className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+              title="Share this site"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            </button>
+          </div>
         </header>
         <hr />
         {children}
@@ -124,6 +138,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <div className="fixed bottom-0 right-0 mt-8 p-2 leading-none rounded-tl-lg text-gray-500 bg-white w-fit">
           By <a href="https://satyajit.xyz">Satyajit</a> & <a href="https://www.linkedin.com/in/jaybhattwrites">Jay</a>
         </div>
+        <ShareModal isOpen={isModalOpen} onClose={closeModal} />
         <Toaster />
         <Scripts />
       </body>

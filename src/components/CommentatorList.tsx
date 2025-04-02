@@ -46,7 +46,7 @@ export function CommentatorList() {
   });
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div className="max-w-3xl mx-auto px-2 py-4 sm:p-4">
       <motion.div
         className="divide-y divide-gray-100"
         layout

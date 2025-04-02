@@ -5,6 +5,9 @@ import NumberFlow from '@number-flow/react'
 import { motion } from 'motion/react'
 import { handleVoteFn } from '../utils/commentators'
 import { trackVote } from '../utils/analytics'
+import { shouldShowAutoShare, markAutoShareAsShown } from '../utils/analytics'
+import { useShareModal } from '../components/ShareModal'
+import { UPVOTES_THRESHOLD } from '~/utils/config'
 
 type Props = {
     commentator: CommentatorWithVotes
@@ -12,12 +15,15 @@ type Props = {
     onVote: (commentatorId: string, voteType: 1 | -1) => void
 }
 
+const voteTracker = new Set<string>();
+
 export function CommentatorCard({ commentator, rank, onVote }: Props) {
     const { user } = Route.useRouteContext()
     const [isVoting, setIsVoting] = useState(false);
     const [prevRank, setPrevRank] = useState(rank);
     const hasRankChanged = prevRank !== rank;
     const isAnonymous = user?.app_metadata?.provider === 'anonymous'
+    const { openModal } = useShareModal();
 
     if (hasRankChanged) {
         setPrevRank(rank);
@@ -29,6 +35,13 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
         setIsVoting(true)
         try {
             onVote(commentator.id, voteType)
+
+            voteTracker.add(commentator.id);
+            
+            if (voteTracker.size === UPVOTES_THRESHOLD && shouldShowAutoShare()) {
+                markAutoShareAsShown();
+                openModal();
+            }
 
             trackVote(commentator.id, voteType === 1 ? 'upvote' : 'downvote', {
                 userId: user.id,
@@ -56,7 +69,7 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
     }
 
     return (
-        <div className={`flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors rounded-lg ${!commentator.is_active ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        <div className={`flex items-start gap-4 px-2 py-4 sm:p-4 hover:bg-gray-50 transition-colors rounded-lg ${!commentator.is_active ? 'opacity-50 cursor-not-allowed' : ''}`}>
             <div className="flex-shrink-0 relative">
                 <img
                     src={commentator.image_url || '/default-avatar.png'}
@@ -79,17 +92,20 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
             </div>
 
             <div className="flex-grow">
-                <p className="text-lg sm:text-xl text-gray-900 leading-relaxed">
-                    {commentator.name}
+                <p className="text-lg sm:text-xl text-gray-900 leading-relaxed flex items-center gap-2">
+                    {commentator.name} {
+                        rank === 1 && (
+                            <img
+                                src="https://res.cloudinary.com/doycahwjt/image/upload/v1743623702/hindi/black-cap_j3g3qt.png"
+                                alt="Rank 1 badge"
+                                className="w-5 h-5"
+                            />
+                        )
+                    }
                 </p>
                 <p className="text-sm text-gray-900 leading-relaxed">
                     {commentator.description}
                 </p>
-                {isAnonymous && (
-                    <p className="text-xs text-gray-500 mt-1">
-                        Sign in with Google to make your votes permanent
-                    </p>
-                )}
             </div>
 
             <div>
