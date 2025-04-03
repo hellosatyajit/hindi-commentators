@@ -62,3 +62,25 @@ export const shouldShowAutoShare = () => {
 export const markAutoShareAsShown = () => {
   localStorage.setItem(AUTO_SHARE_SHOWN_KEY, "true");
 };
+
+export const trackShareModalOpen = (trigger: 'auto' | 'manual') => {
+  if (!MIXPANEL_TOKEN) return;
+
+  mixpanel.track("Share Modal Opened", {
+    trigger,
+    timestamp: new Date().toISOString()
+  });
+};
+
+export const trackShareAction = (
+  method: 'twitter' | 'whatsapp' | 'copy_link',
+  success: boolean = true
+) => {
+  if (!MIXPANEL_TOKEN) return;
+
+  mixpanel.track("Share Action", {
+    method,
+    success,
+    timestamp: new Date().toISOString()
+  });
+};

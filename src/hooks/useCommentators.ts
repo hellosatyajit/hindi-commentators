@@ -3,6 +3,7 @@ import { getSupabaseClient } from "../utils/supabase";
 import type { Commentator, Vote } from "../types/database";
 import { Route } from "../routes/__root";
 import { getCommentatorsFn } from "~/utils/commentators";
+import { CACHE_TIME } from "~/utils/config";
 
 export type CommentatorWithVotes = Commentator & {
   votes?: Pick<Vote, "vote_type" | "user_id">[];
@@ -15,6 +16,7 @@ export function useCommentators() {
   const [commentators, setCommentators] = useState<CommentatorWithVotes[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<number>(0);
   const { user } = Route.useRouteContext();
 
   const updateCommentatorVote = useCallback(
@@ -81,7 +83,13 @@ export function useCommentators() {
     channel
       .on("broadcast", { event: "vote_update" }, async (payload) => {
         if (payload.payload.user_id !== user?.id) {
-          await fetchCommentators();
+          const now = Date.now();
+          const timeSinceLastUpdate = now - lastUpdate;
+
+          if (timeSinceLastUpdate >= CACHE_TIME) {
+            await fetchCommentators();
+            setLastUpdate(now);
+          }
         }
       })
       .subscribe((status) => {
@@ -94,7 +102,7 @@ export function useCommentators() {
     return () => {
       channel.unsubscribe();
     };
-  }, [fetchCommentators, user?.id]);
+  }, [fetchCommentators, user?.id, lastUpdate]);
 
   return {
     commentators,

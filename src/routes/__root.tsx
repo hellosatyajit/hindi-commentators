@@ -122,7 +122,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               vote worst from the worst
             </h1>
             <button
-              onClick={openModal}
+              onClick={() => openModal('manual')}
               className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
               title="Share this site"
             >

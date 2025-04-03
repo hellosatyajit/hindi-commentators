@@ -40,7 +40,7 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
             
             if (voteTracker.size === UPVOTES_THRESHOLD && shouldShowAutoShare()) {
                 markAutoShareAsShown();
-                openModal();
+                openModal('auto');
             }
 
             trackVote(commentator.id, voteType === 1 ? 'upvote' : 'downvote', {

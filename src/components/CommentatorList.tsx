@@ -7,10 +7,10 @@ export function CommentatorList() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto p-4">
+      <div className="max-w-3xl mx-auto px-2 py-4 sm:p-4">
         <div className="space-y-4">
           {[...Array(5)].map((_, index) => (
-            <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
+            <div key={index} className="bg-white px-2 py-4 sm:p-4 rounded-lg shadow-sm">
               <div className="flex items-center space-x-4">
                 <div className="h-12 w-12 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse"></div>
                 <div className="flex-1 space-y-2">

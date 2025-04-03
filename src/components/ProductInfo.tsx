@@ -9,7 +9,7 @@ export function VoteStats() {
 
     if (loading) {
         return (
-            <div className="max-w-3xl mx-auto px-4">
+            <div className="max-w-3xl mx-auto px-2 sm:px-4">
                 <div className="p-4 bg-white rounded-lg">
                     <div className="flex justify-between">
                         <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse w-1/3"></div>
