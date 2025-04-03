@@ -42,7 +42,7 @@ export function CommentatorList() {
     if (a.is_active !== b.is_active) {
       return a.is_active ? -1 : 1;
     }
-    return a.vote_count - b.vote_count;
+    return a.vote_sum - b.vote_sum;
   });
 
   return (

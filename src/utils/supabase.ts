@@ -36,7 +36,6 @@ export const getSupabaseServerClient = () => {
 export const signInAnonymously = async () => {
   const supabase = getSupabaseClient()
   const { data, error } = await supabase.auth.signInAnonymously();
-  console.log('data', data);
   if (data?.user && !error) {
     trackSignIn(data.user.id, 'anonymous', { 
       isAnonymous: true,

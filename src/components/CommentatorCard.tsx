@@ -125,12 +125,12 @@ export function CommentatorCard({ commentator, rank, onVote }: Props) {
                     </motion.button>
                     <motion.span
                         className="text-gray-700 font-medium"
-                        key={commentator.vote_count}
+                        key={commentator.vote_sum}
                         initial={{ scale: 1.2 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring" }}
                     >
-                        <NumberFlow value={commentator.vote_count} />
+                        <NumberFlow value={commentator.vote_sum} />
                     </motion.span>
                     <motion.button
                         onClick={() => handleVote(-1)}

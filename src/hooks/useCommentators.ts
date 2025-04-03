@@ -6,8 +6,7 @@ import { getCommentatorsFn } from "~/utils/commentators";
 import { CACHE_TIME } from "~/utils/config";
 
 export type CommentatorWithVotes = Commentator & {
-  votes?: Pick<Vote, "vote_type" | "user_id">[];
-  vote_count: number;
+  vote_sum: number;
   total_votes: number;
   user_vote?: number;
 };
@@ -25,29 +24,15 @@ export function useCommentators() {
         return prevCommentators.map((commentator) => {
           if (commentator.id !== commentatorId) return commentator;
 
-          const existingVote = commentator.votes?.find(
-            (vote) => vote.user_id === user?.id
-          );
-          const otherVotes =
-            commentator.votes?.filter((vote) => vote.user_id !== user?.id) ||
-            [];
-
-          const updatedVotes = existingVote
-            ? [...otherVotes, { ...existingVote, vote_type: voteType }]
-            : [...otherVotes, { user_id: user?.id!, vote_type: voteType }];
-
-          const voteCount = updatedVotes.reduce(
-            (sum, vote) => sum + (vote.vote_type || 0),
-            0
-          );
-
-          const totalVotes = updatedVotes.length;
+          let voteDiff = voteType;
+          if (commentator.user_vote) {
+            voteDiff = voteType - commentator.user_vote;
+          }
 
           return {
             ...commentator,
-            votes: updatedVotes,
-            vote_count: voteCount,
-            total_votes: totalVotes,
+            vote_sum: commentator.vote_sum + voteDiff,
+            total_votes: commentator.user_vote ? commentator.total_votes : commentator.total_votes + 1,
             user_vote: voteType,
           };
         });
