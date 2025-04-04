@@ -3,6 +3,9 @@ import { getSupabaseServerClient } from "./supabase";
 
 export const getCommentatorsFn = createServerFn().handler(
   async ({ data }: any) => {
+    if (!data?.userId) {
+      throw new Error("User ID is required");
+    }
     const supabase = getSupabaseServerClient();
 
     const { data: commentators, error } = await supabase.rpc(

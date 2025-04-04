@@ -61,7 +61,7 @@ export function VotingInfoModal({ isOpen, onClose }: VotingInfoModalProps) {
                 <p className="text-gray-600 text-sm">
                   Commentators are ranked based on their score, worst to better, with the lowest scores appearing first. 
                 </p>
-                <pre className='font-mono'>final score = upvotes - downvotes</pre>
+                <pre className='font-mono text-wrap'>final score = upvotes - downvotes</pre>
                 <p className="text-gray-600 text-sm mt-2">
                   A score near zero may indicate a commentator is considered neutral by the community - neither particularly good nor bad.
                 </p>

@@ -32,7 +32,9 @@ export function useCommentators() {
           return {
             ...commentator,
             vote_sum: commentator.vote_sum + voteDiff,
-            total_votes: commentator.user_vote ? commentator.total_votes : commentator.total_votes + 1,
+            total_votes: commentator.user_vote
+              ? commentator.total_votes
+              : commentator.total_votes + 1,
             user_vote: voteType,
           };
         });
@@ -43,10 +45,13 @@ export function useCommentators() {
 
   const fetchCommentators = useCallback(async () => {
     try {
+      if (!user?.id) {
+        return;
+      }
       const data = await getCommentatorsFn({
         data: { userId: user?.id } as unknown as any,
       });
-      
+
       setCommentators(data);
       setError(null);
     } catch (err) {
@@ -95,6 +100,9 @@ export function useCommentators() {
     error,
     fetchCommentators,
     updateCommentatorVote,
-    totalVotes: commentators.reduce((sum, commentator) => sum + commentator.total_votes, 0)
+    totalVotes: commentators.reduce(
+      (sum, commentator) => sum + commentator.total_votes,
+      0
+    ),
   };
 }
